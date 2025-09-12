@@ -1,0 +1,76 @@
+{
+  "task_1": {
+    "name": "test task one",
+    "level": 1,
+    "status": 1,
+    "tasks": {
+      "1": {
+        "que": "2+2=",
+        "ans": "4"
+      },
+      "2": {
+        "que": "2+1=",
+        "ans": "3"
+      },
+      "3": {
+        "que": "1+1=",
+        "ans": "2"
+      }
+    }
+  },
+  "task_2": {
+    "name": "test task second",
+    "level": 0,
+    "status": 0,
+    "tasks": {
+      "1": {
+        "que": "2+2=",
+        "ans": "4"
+      },
+      "2": {
+        "que": "2+1=",
+        "ans": "3"
+      },
+      "3": {
+        "que": "1+1=",
+        "ans": "2"
+      }
+    }
+  },
+  "task_4": {
+    "name": "Пример с изображениями",
+    "level": 2,
+    "status": 0,
+    "tasks": {
+      "1": {
+        "que": "Какое из 4-х изображений имеют правильный горизонт?",
+        "ans": "3",
+        "imagePaths": [
+          "assets/images/test.jpg",
+          "assets/images/test.jpg",
+          "assets/images/test.jpg",
+          "assets/images/test.jpg"
+        ]
+      }
+    }
+  },
+  "task_3": {
+    "name": "test task third",
+    "level": 3,
+    "status": 0,
+    "tasks": {
+      "1": {
+        "que": "2+2=",
+        "ans": "4"
+      },
+      "2": {
+        "que": "2+1=",
+        "ans": "3"
+      },
+      "3": {
+        "que": "1+1=",
+        "ans": "2"
+      }
+    }
+  }
+}

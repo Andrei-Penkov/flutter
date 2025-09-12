@@ -1,0 +1,21 @@
+{
+  "tip_1": {
+    "name": "test tip one",
+    "level": 1,
+    "status": 0,
+    "tip": "Very cool tip"
+  },
+  "tip_2": {
+    "name": "test tip second",
+    "level": 0,
+    "status": 0,
+    "tip": "Another helpful tip"
+  },
+  "tip_3": {
+    "name": "Совет с изображение",
+    "level": 1,
+    "status": 0,
+    "tip": "Посмотрите на это изображение",
+    "imagePath": "assets/images/test.jpg"
+  }
+}
