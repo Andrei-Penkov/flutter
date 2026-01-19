@@ -39,6 +39,7 @@ class Task {
 class Question {
   final String? que;
   final String? que_f;
+  final String? que_c; // НОВОЕ: задание с обратным таймером
   final String ans;
   final List<String>? options;
   final List<String>? imagePaths;
@@ -47,6 +48,7 @@ class Question {
   Question({
     this.que,
     this.que_f,
+    this.que_c, // НОВОЕ
     required this.ans,
     this.options,
     this.imagePaths,
@@ -54,11 +56,13 @@ class Question {
   });
 
   bool get isPhotoTask => que_f != null;
+  bool get isCountdownTask => que_c != null; // НОВОЕ
 
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
       que: json['que'],
       que_f: json['que_f'],
+      que_c: json['que_c'], // НОВОЕ
       ans: json['ans'] ?? '',
       options: json['options']?.map<String>((e) => e.toString()).toList(),
       imagePaths: json['imagePaths']?.map<String>((e) => e.toString()).toList(),
@@ -69,6 +73,7 @@ class Question {
   Map<String, dynamic> toJson() => {
     if (que != null) 'que': que,
     if (que_f != null) 'que_f': que_f,
+    if (que_c != null) 'que_c': que_c, // НОВОЕ
     'ans': ans,
     if (options != null) 'options': options,
     if (imagePaths != null) 'imagePaths': imagePaths,
