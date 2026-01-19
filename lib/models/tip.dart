@@ -4,9 +4,9 @@ class Tip {
   int status;
   final String topic;
   final String tip;
-  final String? imagePath;
+  final List<String> images; // Изменено на список фотографий
   final String tipKey;
-  bool isFavorite; // НОВОЕ ПОЛЕ для избранного
+  bool isFavorite;
 
   Tip({
     required this.name,
@@ -14,9 +14,9 @@ class Tip {
     required this.status,
     required this.topic,
     required this.tip,
-    this.imagePath,
+    this.images = const [], // По умолчанию пустой список
     this.tipKey = '',
-    this.isFavorite = false, // По умолчанию не в избранном
+    this.isFavorite = false,
   });
 
   factory Tip.fromJson(Map<String, dynamic> json, {String? key}) {
@@ -26,13 +26,12 @@ class Tip {
       status: json['status'] ?? 0,
       topic: json['topic'],
       tip: json['tip'],
-      imagePath: json['imagePath'],
+      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       tipKey: key ?? json['key'] ?? '',
-      isFavorite: json['isFavorite'] ?? false, // Чтение из JSON
+      isFavorite: json['isFavorite'] ?? false,
     );
   }
 
-  // Для сохранения в JSON можно добавить метод toJson, если нужно
   Map<String, dynamic> toJson() {
     return {
       'name': name,
@@ -40,7 +39,7 @@ class Tip {
       'status': status,
       'topic': topic,
       'tip': tip,
-      'imagePath': imagePath,
+      'images': images,
       'isFavorite': isFavorite,
     };
   }

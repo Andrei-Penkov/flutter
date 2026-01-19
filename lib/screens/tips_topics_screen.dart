@@ -41,6 +41,27 @@ class _TipsTopicsScreenState extends State<TipsTopicsScreen> {
     _searchController.addListener(_onSearchChanged);
   }
 
+  Future<void> _refreshTipsData() async {
+    try {
+      // Перезагружаем статусы советов
+      await TaskStatusManager.instance.applyTipStatuses(allTips);
+      
+      // Пересчитываем статистику
+      final Map<String, List<Tip>> updatedMapByTopic = {};
+      for (var tip in allTips.values) {
+        final normalizedTopic = tip.topic.trim().toLowerCase();
+        updatedMapByTopic.putIfAbsent(normalizedTopic, () => []).add(tip);
+      }
+      
+      setState(() {
+        tipsByTopic = updatedMapByTopic;
+        _updateFilteredTopics();
+      });
+    } catch (e) {
+      debugPrint('❌ Ошибка обновления данных: $e');
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -242,17 +263,6 @@ class _TipsTopicsScreenState extends State<TipsTopicsScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (_filteredTopics.isEmpty)
-                    Text(
-                      'По запросу "$_searchQuery" ничего не найдено',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey[500]
-                            : Colors.grey[500],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -368,7 +378,9 @@ class _TipsTopicsScreenState extends State<TipsTopicsScreen> {
               topicName: topic,
             ),
           ),
-        );
+        ).then((_) {
+          _refreshTipsData();
+        });
       },
       child: Container(
         decoration: BoxDecoration(

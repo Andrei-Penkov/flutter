@@ -350,25 +350,26 @@ class _TaskTestScreenState extends State<TaskTestScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final questions = widget.task.questions.values.toList();
-    final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
-    final currentQuestion = questions[currentQuestionIndex];
-    final selectedAnswer = selectedOptions[currentQuestionKey];
-    final isPhotoTask = currentQuestion.isPhotoTask;
-    final showCorrect = showCorrectAnswers[currentQuestionKey] ?? false;
-    final showHint = showHintForQuestion[currentQuestionKey] ?? false;
-    final isAnswerChecked = answerChecked[currentQuestionKey] ?? false;
+Widget build(BuildContext context) {
+  final questions = widget.task.questions.values.toList();
+  final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
+  final currentQuestion = questions[currentQuestionIndex];
+  final selectedAnswer = selectedOptions[currentQuestionKey];
+  final isPhotoTask = currentQuestion.isPhotoTask;
+  final showCorrect = showCorrectAnswers[currentQuestionKey] ?? false;
+  final showHint = showHintForQuestion[currentQuestionKey] ?? false;
+  final isAnswerChecked = answerChecked[currentQuestionKey] ?? false;
 
-    if (showResult) {
-      return _buildResultsScreen(context);
-    }
+  if (showResult) {
+    return _buildResultsScreen(context);
+  }
 
-    return CommonScaffold(
-      title: '${widget.task.name} (${currentQuestionIndex + 1}/${questions.length})',
-      body: Container(
-        color: getBackgroundColor(context),
-        child: SingleChildScrollView(
+  return CommonScaffold(
+    title: '${widget.task.name} (${currentQuestionIndex + 1}/${questions.length})',
+    body: Stack(
+      children: [
+        // Основной контент с прокруткой
+        SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
@@ -387,22 +388,78 @@ class _TaskTestScreenState extends State<TaskTestScreen> {
 
                 // Quiz варианты
                 _buildOptionsList(context, currentQuestionKey, currentQuestion, selectedAnswer, showCorrect),
+                
+                // Пустое пространство для плавающих кнопок
+                const SizedBox(height: 80),
               ] else ...[
                 _buildPhotoTask(currentQuestionKey, currentQuestion),
+                
+                // Пустое пространство для плавающих кнопок фото-заданий
+                const SizedBox(height: 100),
               ],
-
-              const SizedBox(height: 30),
-
-              if (!isPhotoTask)
-                _buildNavigationButtons(context, questions.length, isAnswerChecked),
-              const SizedBox(height: 40),
             ],
           ),
         ),
-      ),
-    );
-  }
 
+        // Плавающие кнопки навигации
+        Positioned(
+          left: 20,
+          right: 20,
+          bottom: 20, // Отступ от нижнего края
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[900]!.withOpacity(0.95)
+                  : Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade800
+                    : Colors.grey.shade300,
+                width: 1,
+              ),
+            ),
+            child: !isPhotoTask 
+                ? _buildNavigationButtons(context, questions.length, isAnswerChecked)
+                : _buildPhotoNavigationButtons(context),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget _buildPhotoNavigationButtons(BuildContext context) {
+  final questions = widget.task.questions.values.toList();
+  final isLastQuestion = currentQuestionIndex == questions.length - 1;
+  
+  return Row(
+    children: [
+      if (currentQuestionIndex > 0)
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: previousQuestion,
+            icon: const Icon(Icons.arrow_back_ios, size: 18),
+            label: const Text('Назад'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade600,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+      if (currentQuestionIndex > 0) const SizedBox(width: 12),
+    ],
+  );
+}
   Widget _buildResultsScreen(BuildContext context) {
     final questions = widget.task.questions.values.toList();
     final isAllCorrect = answerResults.values.every((v) => v);
