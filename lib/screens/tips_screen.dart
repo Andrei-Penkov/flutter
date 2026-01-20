@@ -415,125 +415,124 @@ class _TipsScreenState extends State<TipsScreen> {
                   )
                 else
                   ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: displayedTips.length,
-                    itemBuilder: (context, idx) {
-                      final tip = displayedTips[idx];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  tip.name,
-                                  style: const TextStyle(fontWeight: FontWeight.w500),
-                                ),
+                  padding: const EdgeInsets.only(bottom: 80),
+                  itemCount: displayedTips.length,
+                  itemBuilder: (context, idx) {
+                    final tip = displayedTips[idx];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: ListTile(
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () => _toggleFavorite(tip),
+                              icon: Icon(
+                                tip.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: tip.isFavorite ? Colors.red : Colors.grey,
+                                size: 20,
                               ),
-                              // Иконка избранного
-                              IconButton(
-                                onPressed: () => _toggleFavorite(tip),
-                                icon: Icon(
-                                  tip.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: tip.isFavorite ? Colors.red : Colors.grey,
-                                  size: 20,
-                                ),
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(
-                                  minWidth: 36,
-                                  minHeight: 36,
-                                ),
-                                tooltip: tip.isFavorite 
-                                    ? 'Удалить из избранного' 
-                                    : 'Добавить в избранное',
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 36,
+                                minHeight: 36,
                               ),
-                            ],
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Уровень: ${tip.level} • Тема: ${tip.topic}'),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
+                              tooltip: tip.isFavorite 
+                                  ? 'Удалить из избранного' 
+                                  : 'Добавить в избранное',
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_forward_ios, size: 16),
+                          ],
+                        ),
+                        title: Text(
+                          tip.name,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Уровень: ${tip.level} • Тема: ${tip.topic}'),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: tip.status == 1 
+                                        ? Colors.green.shade100 
+                                        : Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        tip.status == 1 ? Icons.check : Icons.remove,
+                                        size: 12,
+                                        color: tip.status == 1 ? Colors.green : Colors.grey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        tip.status == 1 ? 'Прочитано' : 'Не прочитано',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: tip.status == 1 ? Colors.green : Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (tip.isFavorite) ...[
+                                  const SizedBox(width: 8),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: tip.status == 1 
-                                          ? Colors.green.shade100 
-                                          : Colors.grey.shade100,
+                                      color: Colors.red.shade100,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(
-                                          tip.status == 1 ? Icons.check : Icons.remove,
+                                        const Icon(
+                                          Icons.favorite,
                                           size: 12,
-                                          color: tip.status == 1 ? Colors.green : Colors.grey,
+                                          color: Colors.red,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          tip.status == 1 ? 'Прочитано' : 'Не прочитано',
+                                          'Избранное',
                                           style: TextStyle(
                                             fontSize: 10,
-                                            color: tip.status == 1 ? Colors.green : Colors.grey,
+                                            color: Colors.red.shade700,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  if (tip.isFavorite) ...[
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red.shade100,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.favorite,
-                                            size: 12,
-                                            color: Colors.red,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Избранное',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.red.shade700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
                                 ],
-                              ),
-                            ],
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => TipDetailScreen(
-                                  tipKey: tip.tipKey,
-                                  tip: tip,
-                                  onStatusChanged: _updateTipStatus,
-                                ),
-                              ),
-                            ).then((_) {
-                              if (mounted) {
-                                setState(() {});
-                              }
-                            });
-                          },
+                              ],
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => TipDetailScreen(
+                                tipKey: tip.tipKey,
+                                tip: tip,
+                                onStatusChanged: _updateTipStatus,
+                              ),
+                            ),
+                          ).then((_) {
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
                 
                 Positioned(
                   right: 20,

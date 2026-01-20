@@ -454,15 +454,7 @@ Future<void> _resetTipsReadStatus() async {
                           ),
                         ),
                       ),
-                      if (hasFavorites)
-                        Text(
-                          'Нажмите для просмотра →',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                      
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -543,7 +535,7 @@ Future<void> _resetTipsReadStatus() async {
                       'Нажмите для просмотра всех избранных',
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.red.withOpacity(0.7),
+                        color: const Color.fromRGBO(244, 67, 54, 1),
                         fontStyle: FontStyle.italic,
                       ),
                     ),

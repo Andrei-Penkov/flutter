@@ -805,9 +805,9 @@ Widget build(BuildContext context) {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: getWrongAnswerColor(context),
+        color: const Color.fromARGB(255, 117, 114, 114),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.shade300),
+        border: Border.all(color: const Color.fromARGB(255, 77, 6, 6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -910,133 +910,199 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildNavigationButtons(BuildContext context, int totalQuestions, bool isAnswerChecked) {
-    final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
-    final hasAnswer = selectedOptions[currentQuestionKey] != null;
-    final isLastQuestion = currentQuestionIndex == totalQuestions - 1;
-    
-    String buttonText;
-    if (!isAnswerChecked) {
-      buttonText = isLastQuestion ? 'Завершить' : 'Проверить';
-    } else {
-      buttonText = isLastQuestion ? 'Завершить тест' : 'Далее';
-    }
+  final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
+  final hasAnswer = selectedOptions[currentQuestionKey] != null;
+  final isLastQuestion = currentQuestionIndex == totalQuestions - 1;
+  
+  String buttonText;
+  bool showRightIcon = false; // Флаг для иконки справа
+  IconData iconData;
+  
+  if (!isAnswerChecked) {
+    buttonText = isLastQuestion ? 'Завершить' : 'Проверить';
+    showRightIcon = false;
+    iconData = Icons.check;
+  } else {
+    buttonText = isLastQuestion ? 'Завершить тест' : 'Далее';
+    showRightIcon = buttonText == 'Далее';
+    iconData = isLastQuestion ? Icons.check : Icons.arrow_forward_ios;
+  }
 
-    return Row(
-      children: [
-        if (currentQuestionIndex > 0)
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: previousQuestion,
-              icon: const Icon(Icons.arrow_back_ios),
-              label: const Text('Назад'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-        if (currentQuestionIndex > 0) const SizedBox(width: 12),
+  return Row(
+    children: [
+      if (currentQuestionIndex > 0)
         Expanded(
-          flex: currentQuestionIndex > 0 ? 1 : 2,
           child: ElevatedButton.icon(
-            onPressed: hasAnswer ? nextQuestion : null,
-            icon: Icon(isAnswerChecked ? Icons.arrow_forward_ios : Icons.check),
-            label: Text(buttonText),
+            onPressed: previousQuestion,
+            icon: const Icon(Icons.arrow_back_ios, size: 16),
+            label: const Text('Назад'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isAnswerChecked ? Colors.blue.shade500 : Colors.green.shade500,
+              backgroundColor: Colors.grey.shade600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ),
-      ],
-    );
-  }
+      if (currentQuestionIndex > 0) const SizedBox(width: 12),
+      Expanded(
+        flex: currentQuestionIndex > 0 ? 1 : 2,
+        child: showRightIcon
+            ? ElevatedButton(
+                onPressed: hasAnswer ? nextQuestion : null,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(buttonText),
+                    const SizedBox(width: 8),
+                    Icon(iconData, size: 16),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isAnswerChecked ? Colors.blue.shade500 : Colors.green.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              )
+            : ElevatedButton.icon(
+                onPressed: hasAnswer ? nextQuestion : null,
+                icon: Icon(iconData, size: 16),
+                label: Text(buttonText),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isAnswerChecked ? Colors.blue.shade500 : Colors.green.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+      ),
+    ],
+  );
+}
 
   Widget _buildPhotoNavigationButtons(BuildContext context) {
-    final questions = widget.task.questions.values.toList();
-    final isLastQuestion = currentQuestionIndex == questions.length - 1;
-    
-    return Row(
-      children: [
-        if (currentQuestionIndex > 0)
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: previousQuestion,
-              icon: const Icon(Icons.arrow_back_ios, size: 18),
-              label: const Text('Назад'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-        if (currentQuestionIndex > 0) const SizedBox(width: 12),
+  final questions = widget.task.questions.values.toList();
+  final isLastQuestion = currentQuestionIndex == questions.length - 1;
+  final showRightIcon = !isLastQuestion;
+  
+  return Row(
+    children: [
+      if (currentQuestionIndex > 0)
         Expanded(
-          flex: currentQuestionIndex > 0 ? 1 : 2,
           child: ElevatedButton.icon(
-            onPressed: nextQuestion,
-            icon: Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
-            label: Text(isLastQuestion ? 'Завершить' : 'Далее'),
+            onPressed: previousQuestion,
+            icon: const Icon(Icons.arrow_back_ios, size: 18),
+            label: const Text('Назад'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade500,
+              backgroundColor: Colors.grey.shade600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),
-      ],
-    );
-  }
+      if (currentQuestionIndex > 0) const SizedBox(width: 12),
+      Expanded(
+        flex: currentQuestionIndex > 0 ? 1 : 2,
+        child: showRightIcon
+            ? ElevatedButton(
+                onPressed: nextQuestion,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isLastQuestion ? 'Завершить' : 'Далее'),
+                    const SizedBox(width: 8),
+                    Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              )
+            : ElevatedButton.icon(
+                onPressed: nextQuestion,
+                label: Text(isLastQuestion ? 'Завершить' : 'Далее'),
+                icon: Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+      ),
+    ],
+  );
+}
 
   Widget _buildCountdownNavigationButtons(BuildContext context) {
-    final questions = widget.task.questions.values.toList();
-    final isLastQuestion = currentQuestionIndex == questions.length - 1;
-    final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
-    final state = countdownTaskStates[currentQuestionKey]!;
-    
-    return Row(
-      children: [
-        if (currentQuestionIndex > 0)
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: state.isRunning ? null : previousQuestion,
-              icon: const Icon(Icons.arrow_back_ios, size: 18),
-              label: const Text('Назад'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: state.isRunning ? Colors.grey.shade400 : Colors.grey.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-        if (currentQuestionIndex > 0) const SizedBox(width: 12),
+  final questions = widget.task.questions.values.toList();
+  final isLastQuestion = currentQuestionIndex == questions.length - 1;
+  final currentQuestionKey = widget.task.questions.keys.elementAt(currentQuestionIndex);
+  final state = countdownTaskStates[currentQuestionKey]!;
+  final showRightIcon = !isLastQuestion;
+  
+  return Row(
+    children: [
+      if (currentQuestionIndex > 0)
         Expanded(
-          flex: currentQuestionIndex > 0 ? 1 : 2,
           child: ElevatedButton.icon(
-            onPressed: state.isRunning || countdownPhotosCount[currentQuestionKey] == null
-                ? null
-                : nextQuestion,
-            icon: Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
-            label: Text(isLastQuestion ? 'Завершить' : 'Далее'),
+            onPressed: state.isRunning ? null : previousQuestion,
+            icon: const Icon(Icons.arrow_back_ios, size: 18),
+            label: const Text('Назад'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: countdownPhotosCount[currentQuestionKey] != null
-                  ? Colors.blue.shade500
-                  : Colors.grey.shade500,
+              backgroundColor: state.isRunning ? Colors.grey.shade400 : Colors.grey.shade600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),
-      ],
-    );
-  }
+      if (currentQuestionIndex > 0) const SizedBox(width: 12),
+      Expanded(
+        flex: currentQuestionIndex > 0 ? 1 : 2,
+        child: showRightIcon
+            ? ElevatedButton(
+                onPressed: state.isRunning || countdownPhotosCount[currentQuestionKey] == null
+                    ? null
+                    : nextQuestion,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isLastQuestion ? 'Завершить' : 'Далее'),
+                    const SizedBox(width: 8),
+                    Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: countdownPhotosCount[currentQuestionKey] != null
+                      ? Colors.blue.shade500
+                      : Colors.grey.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              )
+            : ElevatedButton.icon(
+                onPressed: state.isRunning || countdownPhotosCount[currentQuestionKey] == null
+                    ? null
+                    : nextQuestion,
+                label: Text(isLastQuestion ? 'Завершить' : 'Далее'),
+                icon: Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: countdownPhotosCount[currentQuestionKey] != null
+                      ? Colors.blue.shade500
+                      : Colors.grey.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+      ),
+    ],
+  );
+}
 
   Widget _buildPhotoStatisticsCard(BuildContext context, List<PhotoHistory> history) {
     final sortedHistory = [...history]..sort((a, b) => a.timeSeconds.compareTo(b.timeSeconds));
@@ -1398,11 +1464,7 @@ Widget build(BuildContext context) {
           ),
           
           const SizedBox(height: 16),
-          
-          if (history != null && history.isNotEmpty)
-            _buildPhotoHistoryWidget(history),
-          
-          const SizedBox(height: 40),
+      
           
           if (!photoState.isRunning) ...[
             if (question.tip != null) ...[
@@ -1432,7 +1494,10 @@ Widget build(BuildContext context) {
               ),
               const SizedBox(height: 16),
             ],
-            
+            if (history != null && history.isNotEmpty)
+            _buildPhotoHistoryWidget(history),
+          
+            const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -1560,11 +1625,6 @@ Widget build(BuildContext context) {
           
           const SizedBox(height: 16),
           
-          if (history != null && history.isNotEmpty)
-            _buildCountdownHistoryWidget(history),
-          
-          const SizedBox(height: 40),
-          
           if (!state.isRunning) ...[
             if (question.tip != null) ...[
               SizedBox(
@@ -1593,6 +1653,11 @@ Widget build(BuildContext context) {
               ),
               const SizedBox(height: 16),
             ],
+
+            if (history != null && history.isNotEmpty)
+            _buildCountdownHistoryWidget(history),
+          
+            const SizedBox(height: 40),
             
             SizedBox(
               width: double.infinity,
