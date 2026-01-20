@@ -1,4 +1,3 @@
-// screens/favorites_tips_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -126,6 +125,75 @@ class _FavoritesTipsScreenState extends State<FavoritesTipsScreen> {
     }
     
     return groups;
+  }
+
+  // Виджет для отображения статуса "прочитано"
+  Widget _buildReadStatus(int status, BuildContext context) {
+    if (status == 1) {
+      // Овал с надписью "прочитано" для прочитанных советов
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.green.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.check_circle,
+              size: 14,
+              color: Colors.green,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'прочитано',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Непрочитанные советы - серый овал
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.circle_outlined,
+              size: 14,
+              color: Colors.grey.shade500,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'не прочитано',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -294,10 +362,8 @@ class _FavoritesTipsScreenState extends State<FavoritesTipsScreen> {
                                     tooltip: 'Удалить из избранного',
                                   ),
                                   const SizedBox(width: 8),
-                                  Icon(
-                                    tip.status == 1 ? Icons.check_circle : Icons.circle_outlined,
-                                    color: tip.status == 1 ? Colors.green : Colors.grey,
-                                  ),
+                                  // Используем виджет овала вместо иконки чекбокса
+                                  _buildReadStatus(tip.status, context),
                                 ],
                               ),
                               onTap: () {
