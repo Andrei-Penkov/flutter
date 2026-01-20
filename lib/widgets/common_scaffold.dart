@@ -6,6 +6,7 @@ import '../screens/tips_topics_screen.dart';
 import '../models/task.dart';
 import '../models/tip.dart';
 import '../screens/stats_screen.dart';
+import '../screens/main_screen.dart';
 
 class CommonScaffold extends StatelessWidget {
   final String title;
@@ -132,13 +133,10 @@ class CommonScaffold extends StatelessWidget {
                 context,
                 icon: Icons.home,
                 label: 'Домой',
-                screenType: 'home', // Используем строковые идентификаторы
+                targetType: MainScreen,
+                routeName: '/',
                 activeColor: activeColor,
                 iconColor: iconColor,
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/', (route) => false);
-                },
               ),
               
               // Задания
@@ -146,14 +144,10 @@ class CommonScaffold extends StatelessWidget {
                 context,
                 icon: Icons.assignment_late_outlined,
                 label: 'Задания',
-                screenType: 'tasks',
+                targetType: TasksTopicsScreen,
+                routeName: '/tasks_topics',
                 activeColor: activeColor,
                 iconColor: iconColor,
-                onTap: () => _navigateSafely(
-                  context, 
-                  const TasksTopicsScreen(), 
-                  'tasks'
-                ),
               ),
               
               // Советы
@@ -161,14 +155,10 @@ class CommonScaffold extends StatelessWidget {
                 context,
                 icon: Icons.auto_stories_outlined,
                 label: 'Советы',
-                screenType: 'tips',
+                targetType: TipsTopicsScreen,
+                routeName: '/tips_topics',
                 activeColor: activeColor,
                 iconColor: iconColor,
-                onTap: () => _navigateSafely(
-                  context, 
-                  const TipsTopicsScreen(), 
-                  'tips'
-                ),
               ),
               
               // Статистика
@@ -176,14 +166,10 @@ class CommonScaffold extends StatelessWidget {
                 context,
                 icon: Icons.bar_chart,
                 label: 'Статистика',
-                screenType: 'stats',
+                targetType: StatsScreen,
+                routeName: '/stats',
                 activeColor: activeColor,
                 iconColor: iconColor,
-                onTap: () => _navigateSafely(
-                  context, 
-                  const StatsScreen(), // Нужно импортировать StatsScreen
-                  'stats'
-                ),
               ),
             ],
           ),
@@ -196,20 +182,20 @@ class CommonScaffold extends StatelessWidget {
     BuildContext context, {
     required IconData icon,
     required String label,
-    required String screenType,
+    required Type targetType,
+    required String routeName,
     required Color activeColor,
     required Color iconColor,
-    required VoidCallback onTap,
   }) {
-    // Определяем активный экран по типу текущего виджета body
-    bool isActive = _isScreenActive(context, screenType);
+    // Определяем, активен ли текущий экран
+    bool isActive = _isCurrentScreen(context, targetType);
     
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
+          onTap: () => _navigateToScreen(context, targetType, routeName),
           splashColor: activeColor.withOpacity(0.2),
           highlightColor: activeColor.withOpacity(0.1),
           child: Container(
@@ -261,68 +247,88 @@ class CommonScaffold extends StatelessWidget {
     );
   }
 
-  bool _isScreenActive(BuildContext context, String screenType) {
-    // Проверяем тип текущего экрана
-    switch (screenType) {
-      case 'home':
-        // Для главного экрана - проверяем, не находимся ли мы на каком-то из других экранов
-        final currentRoute = ModalRoute.of(context);
-        if (currentRoute != null) {
-          final routeSettings = currentRoute.settings;
-          // Если route имеет имя, отличное от '/', значит это не главный экран
-          if (routeSettings.name != null && routeSettings.name != '/') {
-            return false;
-          }
-        }
-        // Проверяем, какой виджет сейчас отображается
-        return _getCurrentScreenType(context) == 'home';
-      
-      case 'tasks':
-        return _getCurrentScreenType(context) == 'tasks';
-      
-      case 'tips':
-        return _getCurrentScreenType(context) == 'tips';
-      
-      case 'stats':
-        return _getCurrentScreenType(context) == 'stats';
-      
+  // Проверяем, является ли переданный тип текущим экраном
+  bool _isCurrentScreen(BuildContext context, Type targetType) {
+    final currentRoute = ModalRoute.of(context);
+    
+    if (currentRoute == null) return false;
+    
+    // Если это MaterialPageRoute, проверяем builder
+    if (currentRoute is MaterialPageRoute) {
+      try {
+        // Получаем тип виджета из route
+        final builder = currentRoute.builder;
+        // Чтобы получить тип, нужно вызвать builder с контекстом
+        final Widget widget = builder(context);
+        
+        // Проверяем, соответствует ли тип виджета целевому типу
+        return widget.runtimeType == targetType;
+      } catch (e) {
+        // Если возникла ошибка, используем альтернативный метод
+        return _checkRouteNameFallback(currentRoute, targetType);
+      }
+    }
+    
+    // Для других типов routes используем альтернативную проверку
+    return _checkRouteNameFallback(currentRoute, targetType);
+  }
+
+  // Альтернативная проверка по имени route
+  bool _checkRouteNameFallback(ModalRoute currentRoute, Type targetType) {
+    final routeSettings = currentRoute.settings;
+    if (routeSettings.name == null) return false;
+    
+    // Сопоставляем имя route с типом экрана
+    switch (targetType) {
+      case MainScreen:
+        return routeSettings.name == '/';
+      case TasksTopicsScreen:
+        return routeSettings.name == '/tasks_topics';
+      case TipsTopicsScreen:
+        return routeSettings.name == '/tips_topics';
+      case StatsScreen:
+        return routeSettings.name == '/stats';
       default:
         return false;
     }
   }
 
-  String _getCurrentScreenType(BuildContext context) {
-    // Проходим по дереву виджетов и определяем тип текущего экрана
-    final widgetType = body.runtimeType.toString();
-    
-    // Определяем тип по названию класса виджета
-    if (widgetType.contains('TasksTopicsScreen') || 
-        widgetType.contains('Task') && !widgetType.contains('Home')) {
-      return 'tasks';
-    } else if (widgetType.contains('TipsTopicsScreen') || 
-               widgetType.contains('Tip') && !widgetType.contains('Home')) {
-      return 'tips';
-    } else if (widgetType.contains('StatsScreen') || 
-               widgetType.contains('Stat')) {
-      return 'stats';
-    } else {
-      // По умолчанию считаем, что это главный экран
-      return 'home';
-    }
-  }
-
-  void _navigateSafely(BuildContext context, Widget targetScreen, String screenType) {
+  void _navigateToScreen(BuildContext context, Type targetType, String routeName) {
     // Проверяем, не находимся ли мы уже на этом экране
-    if (_isScreenActive(context, screenType)) {
-      return;
+    if (_isCurrentScreen(context, targetType)) {
+      return; // Уже на этом экране, ничего не делаем
     }
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => targetScreen),
-    );
+    
+    // Создаем целевой экран в зависимости от типа
+    Widget targetScreen;
+    switch (targetType) {
+      case MainScreen:
+        targetScreen = const MainScreen();
+        break;
+      case TasksTopicsScreen:
+        targetScreen = const TasksTopicsScreen();
+        break;
+      case TipsTopicsScreen:
+        targetScreen = const TipsTopicsScreen();
+        break;
+      case StatsScreen:
+        targetScreen = const StatsScreen();
+        break;
+      default:
+        targetScreen = const MainScreen();
+    }
+    
+    // Если это главный экран, очищаем всю навигацию
+    if (routeName == '/') {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => targetScreen),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => targetScreen),
+      );
+    }
   }
 }
-
-// Если у вас есть StatsScreen, нужно его импортировать и использовать
-// Если нет, создайте заглушку или используйте другой подход для статистики
