@@ -75,7 +75,7 @@ class _StatsScreenState extends State<StatsScreen> {
       debugPrint('✅ Статистика загружена:');
       debugPrint('   📝 Заданий: ${tasks.length}');
       debugPrint('   💡 Советов: ${tips.length}');
-      debugPrint('   ❤️  Избранных советов: ${favoriteTips}');
+      debugPrint('   ❤️  Избранных советов: $favoriteTips');
 
       setState(() {
         isLoading = false;
@@ -490,7 +490,7 @@ Future<void> _resetTipsReadStatus() async {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                   
                   if (favoriteTopics.length > 3) ...[
                     const SizedBox(height: 4),
@@ -714,7 +714,7 @@ Future<void> _resetTipsReadStatus() async {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     ),
   );

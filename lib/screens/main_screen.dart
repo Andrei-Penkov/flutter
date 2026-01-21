@@ -6,10 +6,7 @@ import '../models/tip.dart';
 import '../managers/task_status_manager.dart';
 import '../screens/task_test_screen.dart';
 import '../screens/tips_detail_screen.dart';
-import '../screens/tasks_topics_screen.dart';
 import '../screens/tasks_screen.dart';
-import '../screens/tips_topics_screen.dart';
-import '../screens/tips_screen.dart';
 import '../widgets/common_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

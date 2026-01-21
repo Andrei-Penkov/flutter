@@ -383,12 +383,12 @@ class _FavoritesTipsScreenState extends State<FavoritesTipsScreen> {
                                 });
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
                   );
-                }).toList(),
+                }),
                 
                 const SizedBox(height: 80), // Отступ для FAB если есть
               ],

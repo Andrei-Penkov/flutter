@@ -490,7 +490,7 @@ class _TaskTestScreenState extends State<TaskTestScreen> {
     if (seconds < 60) return '$seconds сек';
     final minutes = seconds ~/ 60;
     final remainingSeconds = seconds % 60;
-    return '$minutes мин ${remainingSeconds} сек';
+    return '$minutes мин $remainingSeconds сек';
   }
 
   @override
@@ -949,6 +949,11 @@ Widget build(BuildContext context) {
         child: showRightIcon
             ? ElevatedButton(
                 onPressed: hasAnswer ? nextQuestion : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isAnswerChecked ? Colors.blue.shade500 : Colors.green.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -956,11 +961,6 @@ Widget build(BuildContext context) {
                     const SizedBox(width: 8),
                     Icon(iconData, size: 16),
                   ],
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isAnswerChecked ? Colors.blue.shade500 : Colors.green.shade500,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               )
             : ElevatedButton.icon(
@@ -1005,6 +1005,12 @@ Widget build(BuildContext context) {
         child: showRightIcon
             ? ElevatedButton(
                 onPressed: nextQuestion,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade500,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1012,12 +1018,6 @@ Widget build(BuildContext context) {
                     const SizedBox(width: 8),
                     Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
                   ],
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade500,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               )
             : ElevatedButton.icon(
@@ -1067,14 +1067,6 @@ Widget build(BuildContext context) {
                 onPressed: state.isRunning || countdownPhotosCount[currentQuestionKey] == null
                     ? null
                     : nextQuestion,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(isLastQuestion ? 'Завершить' : 'Далее'),
-                    const SizedBox(width: 8),
-                    Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
-                  ],
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: countdownPhotosCount[currentQuestionKey] != null
                       ? Colors.blue.shade500
@@ -1082,6 +1074,14 @@ Widget build(BuildContext context) {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isLastQuestion ? 'Завершить' : 'Далее'),
+                    const SizedBox(width: 8),
+                    Icon(isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios, size: 18),
+                  ],
                 ),
               )
             : ElevatedButton.icon(
@@ -1179,7 +1179,7 @@ Widget build(BuildContext context) {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
           ],
         ],
       ),
@@ -1256,7 +1256,7 @@ Widget build(BuildContext context) {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
           ] else ...[
             Text(
               'Нет сохраненных результатов',
@@ -1324,7 +1324,7 @@ Widget build(BuildContext context) {
                     const SizedBox(height: 8),
                   ],
                 ),
-              )).toList(),
+              )),
         ],
       ),
     );
@@ -1775,7 +1775,7 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
         ],
       ),
     );
@@ -1829,7 +1829,7 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
         ],
       ),
     );

@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeManager>(
       builder: (context, themeManager, child) {
         return MaterialApp(
-          title: 'Tasks & Tips App',
+          title: 'Тренажёр',
           theme: _lightTheme(),
           darkTheme: _darkTheme(), 
           themeMode: themeManager.themeMode,
